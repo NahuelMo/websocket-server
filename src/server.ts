@@ -5,7 +5,7 @@ const wss = new WebSocketServer({ port: 8080 });
 
 // Función para enviar un mensaje a todos los clientes conectados
 function broadcast(data: string) {
-  wss.clients.forEach((client) => {
+  wss.clients.forEach((client: WebSocket) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
