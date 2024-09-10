@@ -3,6 +3,15 @@ import { WebSocketServer, WebSocket } from 'ws';
 // Crear un servidor WebSocket
 const wss = new WebSocketServer({ port: 8080 });
 
+// Función para enviar un mensaje a todos los clientes conectados
+function broadcast(data: string) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+}
+
 // Escuchar las conexiones entrantes
 wss.on('connection', (ws: WebSocket) => {
   console.log('Cliente conectado');
@@ -23,5 +32,12 @@ wss.on('connection', (ws: WebSocket) => {
     console.log('Conexión cerrada');
   });
 });
+
+// Enviar una notificación a todos los clientes cada 1 minuto (60000 ms)
+setInterval(() => {
+  const notificationMessage = 'Notificación desde el servidor: ' + new Date().toLocaleTimeString();
+  console.log('Enviando notificación a los clientes:', notificationMessage);
+  broadcast(notificationMessage);
+}, 60000);
 
 console.log('Servidor WebSocket funcionando en ws://localhost:8080');
